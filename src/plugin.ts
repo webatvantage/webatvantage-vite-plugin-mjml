@@ -48,13 +48,28 @@ export function compileInput(input: string, options: CompileOptions) {
 export default function(options: Partial<Options> = {}): Plugin {
 	let compileOptions: CompileOptions
 
+	const compileFiles = async (paths: string) => {
+		let input = ''
+
+		if (paths.includes('*')) {
+			input = paths
+		} else if (!paths.match(/\.mjml/)) {
+			input = path.join(paths, '**/*.mjml').replace(/\\/g, '/')
+		}
+
+		const files = await fg(input)
+		debug.mjml('Compiling MJML files:', { input, files })
+		files.forEach((file) => compileInput(file, compileOptions))
+	}
+
 	return {
 		name: 'mjml',
 		configResolved(config) {
 			compileOptions = {
-				input: 'resources/mail',
-				output: 'resources/views/emails',
-				extension: '.blade.php',
+				input: 'src/mjml',
+				views: 'src/mjml/views',
+				output: "mailings",
+				extension: ".html",
 				logger: config.logger,
 				building: config.command === 'build',
 				log: true,
@@ -65,25 +80,17 @@ export default function(options: Partial<Options> = {}): Plugin {
 			debug.mjml('Configuration resolved:', compileOptions)
 		},
 		async buildEnd() {
-			let input: string = compileOptions.input
-
-			if (compileOptions.input.includes('*')) {
-				input = compileOptions.input
-			} else if (!compileOptions.input.match(/\.mjml/)) {
-				input = path.join(compileOptions.input, '**/*.mjml').replace(/\\/g, '/')
-			}
-
-			const files = await fg(input)
-			debug.mjml('Compiling MJML files:', { input, files })
-			files.forEach((file) => compileInput(file, compileOptions))
+			await compileFiles(compileOptions.input)
 		},
 		configureServer(server) {
-			if (compileOptions.watch === false) {
+			if (!compileOptions.watch) {
 				debug.watch('Watching disabled.')
 				return
 			}
 
-			function handleReload(path: string) {
+			async function handleReload(path: string) {
+				let views = compileOptions.views;
+
 				if (!path.includes(compileOptions.input)) {
 					return
 				}
@@ -95,6 +102,10 @@ export default function(options: Partial<Options> = {}): Plugin {
 				debug.watch(`${path} changed, compiling`)
 
 				compileInput(path, compileOptions)
+
+				if (views) {
+					await compileFiles(views)
+				}
 			}
 
 			server.watcher

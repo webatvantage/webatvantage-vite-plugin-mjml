@@ -3,6 +3,7 @@ import { Logger } from 'vite'
 
 export interface Options {
 	input: string
+	views: string
 	output: string
 	extension: string
 	watch: boolean
