@@ -6,6 +6,7 @@ export interface Options {
 	views: string
 	output: string
 	extension: string
+	exclude: string | string[]
 	watch: boolean
 	log: boolean
 	mjml?: MJMLParsingOptions

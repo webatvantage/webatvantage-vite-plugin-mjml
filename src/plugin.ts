@@ -34,7 +34,7 @@ export function compileInput(input: string, options: CompileOptions) {
 		log(c.gray(`${input} -> ${outputFile} (${fs.statSync(outputFile).size} B)`))
 		debug.compile('Compilation done:', { result, outputFile })
 	} catch (error: any) {
-		debug.compile('An error occured:', error)
+		debug.compile('An error occurred:', error)
 
 		if (options.building) {
 			throw error
@@ -48,7 +48,7 @@ export function compileInput(input: string, options: CompileOptions) {
 export default function(options: Partial<Options> = {}): Plugin {
 	let compileOptions: CompileOptions
 
-	const compileFiles = async (paths: string) => {
+	const compileFiles = async(paths: string) => {
 		let input = ''
 
 		if (paths.includes('*')) {
@@ -57,9 +57,16 @@ export default function(options: Partial<Options> = {}): Plugin {
 			input = path.join(paths, '**/*.mjml').replace(/\\/g, '/')
 		}
 
+		const excludes = Array.isArray(compileOptions.exclude)
+			? compileOptions.exclude
+			: [compileOptions.exclude]
 		const files = await fg(input)
 		debug.mjml('Compiling MJML files:', { input, files })
-		files.forEach((file) => compileInput(file, compileOptions))
+		files.forEach((file) => {
+			if (!excludes.some((exclude: string) => file.startsWith(exclude))) {
+				compileInput(file, compileOptions)
+			}
+		})
 	}
 
 	return {
@@ -68,8 +75,9 @@ export default function(options: Partial<Options> = {}): Plugin {
 			compileOptions = {
 				input: 'src/mjml',
 				views: 'src/mjml/views',
-				output: "mailings",
-				extension: ".html",
+				output: 'mailings',
+				extension: '.html',
+				exclude: [],
 				logger: config.logger,
 				building: config.command === 'build',
 				log: true,
@@ -89,7 +97,7 @@ export default function(options: Partial<Options> = {}): Plugin {
 			}
 
 			async function handleReload(path: string) {
-				let views = compileOptions.views;
+				const views = compileOptions.views
 
 				if (!path.includes(compileOptions.input)) {
 					return

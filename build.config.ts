@@ -7,7 +7,7 @@ export default defineBuildConfig({
 		'rollup',
 		'vite',
 		'mjml',
-		'mjml-core'
+		'mjml-core',
 	],
 	rollup: {
 		emitCJS: true,
