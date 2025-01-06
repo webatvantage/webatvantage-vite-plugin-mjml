@@ -53,7 +53,7 @@ Similarly, when building for production, all files in `input` will be compiled a
 | `views`     | `string`             | Path to views directory in which .mjml files are recompiled when ng-includes are edited. | `src/mjml/views` |
 | `output`    | `string`             | Path to the directory in which compiled files will be written                            | `mailings`       |
 | `extension` | `string`             | Extension that will be used by compiled `.mjml` files                                    | `.html`          |
-| `exclude`   | `string              | string[]`    Exclude directories from compiled `.mjml` files                             | `[]`             |
+| `exclude`   | `string              | Exclude directories from saved as compiled `.mjml` files                                 | `[]`             |
 | `mjml`      | `MJMLParsingOptions` | Specific MJML [compiler options](https://documentation.mjml.io/#inside-node-js)          | `{}`             |
 | `watch`     | `boolean`            | Whether to watch and compile on the fly in development mode                              | `true`           |
 | `log`       | `boolean`            | Whether to print output in the console                                                   | `true`           |

@@ -25,7 +25,7 @@ export function compileInput(input: string, options: CompileOptions) {
 	try {
 		const result = mjml(content, options.mjml)
 		const outputFile = input
-			.replace(options.input, options.output)
+			.replace(options.input.replaceAll('\\', '/'), options.output.replaceAll('\\', '/'))
 			.replace('.mjml', options.extension)
 
 		fs.mkdirSync(path.dirname(outputFile), { recursive: true })
@@ -63,7 +63,7 @@ export default function(options: Partial<Options> = {}): Plugin {
 		const files = await fg(input)
 		debug.mjml('Compiling MJML files:', { input, files })
 		files.forEach((file) => {
-			if (!excludes.some((exclude: string) => file.startsWith(exclude))) {
+			if (!excludes.some((exclude: string) => file.startsWith(exclude.replaceAll('\\', '/')))) {
 				compileInput(file, compileOptions)
 			}
 		})

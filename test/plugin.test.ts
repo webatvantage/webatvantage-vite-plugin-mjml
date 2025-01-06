@@ -30,9 +30,10 @@ test('it compiles', async() => {
 
 test('it can exclude directories', async() => {
 	expect(fs.existsSync(output)).toBe(false)
+
 	await build({
 		root: fixtures,
-		logLevel: 'silent',
+		// logLevel: 'silent',
 		plugins: [
 			mjml({
 				log: false,
