@@ -10,7 +10,7 @@
 	<p align="center">
 		A plugin for compiling <a href="https://mjml.io/"><code>mjml</code></a> files in your Vite pipeline.
 	</p>
-	<pre><div align="center">npm i -D vite-plugin-mjml</div></pre>
+	<pre><div align="center">npm i -D @webatvantage/vite-plugin-mjml</div></pre>
 </p>
 
 &nbsp;
