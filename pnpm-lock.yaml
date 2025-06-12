@@ -20,9 +20,6 @@ importers:
       mjml-core:
         specifier: ^4.15.3
         version: 4.15.3
-      normalize-path:
-        specifier: ^3.0.0
-        version: 3.0.0
       picocolors:
         specifier: ^1.0.0
         version: 1.1.1

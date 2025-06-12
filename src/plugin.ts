@@ -13,6 +13,14 @@ import { debug } from './utils'
  * Compiles the given MJML file.
  */
 export function compileInput(input: string, options: CompileOptions) {
+	const excludes = Array.isArray(options.exclude)
+		? options.exclude
+		: [options.exclude]
+
+	if (excludes.map(exclude => path.resolve(exclude)).some((exclude: string) => path.resolve(input).startsWith(normalizePath(exclude)))) {
+		return
+	}
+
 	debug.compile('Compiling input:', { input, options })
 
 	const log = options.log === false
@@ -58,15 +66,10 @@ export default function(options: Partial<Options> = {}): Plugin {
 			input = path.join(paths, '**/*.mjml').replace(/\\/g, '/')
 		}
 
-		const excludes = Array.isArray(compileOptions.exclude)
-			? compileOptions.exclude
-			: [compileOptions.exclude]
 		const files = await fg(input)
 		debug.mjml('Compiling MJML files:', { input, files })
 		files.forEach((file) => {
-			if (!excludes.some((exclude: string) => file.startsWith(normalizePath(exclude)))) {
-				compileInput(file, compileOptions)
-			}
+			compileInput(file, compileOptions);
 		})
 	}
 
