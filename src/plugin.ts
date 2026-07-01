@@ -30,9 +30,10 @@ export function compileInput(input: string, options: CompileOptions) {
 			: (text: string) => options.logger.info(text, { timestamp: true })
 
 	const content = fs.readFileSync(input, 'utf-8')
+	const source = options.preprocess ? options.preprocess(content, input) : content
 
 	try {
-		const result = mjml(content, options.mjml)
+		const result = mjml(source, options.mjml)
 		const outputFile = input
 			.replace(normalizePath(options.input), normalizePath(options.output))
 			.replace('.mjml', options.extension)
