@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import fs from 'node:fs'
 import path from 'node:path'
-import { normalizePath } from "vite";
-import { Plugin } from 'vite'
+import type { Plugin } from 'vite'
+import { normalizePath } from 'vite'
 import mjml from 'mjml'
 import fg from 'fast-glob'
 import c from 'picocolors'
@@ -17,7 +17,7 @@ export function compileInput(input: string, options: CompileOptions) {
 		? options.exclude
 		: [options.exclude]
 
-	if (excludes.map(exclude => path.resolve(exclude)).some((exclude: string) => path.resolve(input).startsWith(normalizePath(exclude)))) {
+	if (excludes.map((exclude) => path.resolve(exclude)).some((exclude: string) => path.resolve(input).startsWith(normalizePath(exclude)))) {
 		return
 	}
 
@@ -55,10 +55,10 @@ export function compileInput(input: string, options: CompileOptions) {
 	}
 }
 
-export default function(options: Partial<Options> = {}): Plugin {
+export default function (options: Partial<Options> = {}): Plugin {
 	let compileOptions: CompileOptions
 
-	const compileFiles = async(paths: string) => {
+	const compileFiles = async (paths: string) => {
 		let input = ''
 
 		if (paths.includes('*')) {
@@ -70,7 +70,7 @@ export default function(options: Partial<Options> = {}): Plugin {
 		const files = await fg(input)
 		debug.mjml('Compiling MJML files:', { input, files })
 		files.forEach((file) => {
-			compileInput(file, compileOptions);
+			compileInput(file, compileOptions)
 		})
 	}
 

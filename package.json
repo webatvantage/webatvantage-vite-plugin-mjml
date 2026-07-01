@@ -27,7 +27,7 @@
     "prepare": "npm run build",
     "build": "unbuild",
     "test": "vitest",
-    "lint": "eslint src/*.ts",
+    "lint": "eslint src",
     "release": "bumpp --push --tag --commit \"release: v\""
   },
   "dependencies": {
