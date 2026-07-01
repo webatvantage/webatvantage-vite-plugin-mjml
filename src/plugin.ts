@@ -17,13 +17,21 @@ export function compileInput(input: string, options: CompileOptions) {
 		? options.exclude
 		: [options.exclude]
 
-	if (excludes.map((exclude) => path.resolve(exclude)).some((exclude: string) => path.resolve(input).startsWith(normalizePath(exclude)))) {
+	const normalizedInput = normalizePath(path.resolve(input))
+	const isExcluded = excludes.some((exclude) => {
+		const normalizedExclude = normalizePath(path.resolve(exclude))
+
+		// Match the excluded path itself or any file nested under it.
+		return normalizedInput === normalizedExclude || normalizedInput.startsWith(`${normalizedExclude}/`)
+	})
+
+	if (isExcluded) {
 		return
 	}
 
 	debug.compile('Compiling input:', { input, options })
 
-	const log = options.log === false
+	const log = !options.log
 		? () => {}
 		: options.building
 			? (text: string) => console.log(`${c.cyan(c.bold('mjml'))} - ${text}`)
