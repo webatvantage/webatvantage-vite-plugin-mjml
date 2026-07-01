@@ -1,0 +1,4 @@
+allowBuilds:
+  # esbuild ships its binary via a platform optional-dependency, so its
+  # postinstall script isn't needed for the build to work.
+  esbuild: false
