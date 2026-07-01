@@ -31,6 +31,8 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6.0.9
+        with:
+          version: '10'   # latest pnpm 10.x (runs on the whole matrix)
 
       - name: Setup node
         uses: actions/setup-node@v6
