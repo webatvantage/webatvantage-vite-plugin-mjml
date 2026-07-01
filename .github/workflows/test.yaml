@@ -29,16 +29,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6.0.9
-
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
           cache: 'pnpm'
 
-      - run: pnpm install
+      - name: Install Dependencies
+        run: pnpm install
 
       - name: Lint
         run: pnpm run lint
