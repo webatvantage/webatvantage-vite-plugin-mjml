@@ -19,7 +19,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     env:
-      DEBUG: 'preset:*'
+      DEBUG: 'vite:mjml*'
 
     strategy:
       matrix:
