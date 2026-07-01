@@ -1,6 +1,6 @@
 {
   "name": "@webatvantage/vite-plugin-mjml",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "author": "Enzo Innocenzi",
   "license": "MIT",
   "exports": {
