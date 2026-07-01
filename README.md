@@ -57,6 +57,31 @@ Similarly, when building for production, all files in `input` will be compiled a
 | `mjml`      | `MJMLParsingOptions` | Specific MJML [compiler options](https://documentation.mjml.io/#inside-node-js)          | `{}`             |
 | `watch`     | `boolean`            | Whether to watch and compile on the fly in development mode                              | `true`           |
 | `log`       | `boolean`            | Whether to print output in the console                                                   | `true`           |
+| `preprocess`| `(content: string, filePath: string) => string` | Transforms the raw file contents before they reach the MJML compiler        | `undefined`      |
+
+&nbsp;
+
+### `preprocess`
+
+The `preprocess` hook lets you transform the raw contents of each `.mjml` file
+*before* it is passed to the MJML compiler. It receives the file contents and the
+path of the file being compiled, and returns the source to compile.
+
+This is useful for injecting or rewriting content that MJML would otherwise strip.
+For example, wrapping templating directives in `<mj-raw>`:
+
+```ts
+mjml({
+	input: 'resources/mail',
+	output: 'resources/views/emails',
+	preprocess: (content, filePath) => content.replace(
+		/({(?:if|foreach|assign)[^}]*})/g,
+		'<mj-raw>$1</mj-raw>',
+	),
+})
+```
+
+When `preprocess` is omitted, the file contents are passed to MJML unchanged.
 
 <p align="center">
 	<br />

@@ -8,22 +8,22 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2.0.1
-        with:
-          version: 6.27.0
+        uses: pnpm/action-setup@v6.0.9
 
-      - name: Use Node.js v16
-        uses: actions/setup-node@v2
+      - name: Setup node
+        uses: actions/setup-node@v6
         with:
-          node-version: v16
-          registry-url: https://registry.npmjs.org/
+          node-version: 24
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
 
       - run: npx conventional-github-releaser -p angular
         continue-on-error: true

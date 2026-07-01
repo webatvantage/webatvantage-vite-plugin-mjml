@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import fs from 'node:fs'
 import path from 'node:path'
-import { normalizePath } from "vite";
-import { Plugin } from 'vite'
+import type { Plugin } from 'vite'
+import { normalizePath } from 'vite'
 import mjml from 'mjml'
 import fg from 'fast-glob'
 import c from 'picocolors'
@@ -17,22 +17,31 @@ export function compileInput(input: string, options: CompileOptions) {
 		? options.exclude
 		: [options.exclude]
 
-	if (excludes.map(exclude => path.resolve(exclude)).some((exclude: string) => path.resolve(input).startsWith(normalizePath(exclude)))) {
+	const normalizedInput = normalizePath(path.resolve(input))
+	const isExcluded = excludes.some((exclude) => {
+		const normalizedExclude = normalizePath(path.resolve(exclude))
+
+		// Match the excluded path itself or any file nested under it.
+		return normalizedInput === normalizedExclude || normalizedInput.startsWith(`${normalizedExclude}/`)
+	})
+
+	if (isExcluded) {
 		return
 	}
 
 	debug.compile('Compiling input:', { input, options })
 
-	const log = options.log === false
+	const log = !options.log
 		? () => {}
 		: options.building
 			? (text: string) => console.log(`${c.cyan(c.bold('mjml'))} - ${text}`)
 			: (text: string) => options.logger.info(text, { timestamp: true })
 
 	const content = fs.readFileSync(input, 'utf-8')
+	const source = options.preprocess ? options.preprocess(content, input) : content
 
 	try {
-		const result = mjml(content, options.mjml)
+		const result = mjml(source, options.mjml)
 		const outputFile = input
 			.replace(normalizePath(options.input), normalizePath(options.output))
 			.replace('.mjml', options.extension)
@@ -54,10 +63,10 @@ export function compileInput(input: string, options: CompileOptions) {
 	}
 }
 
-export default function(options: Partial<Options> = {}): Plugin {
+export default function (options: Partial<Options> = {}): Plugin {
 	let compileOptions: CompileOptions
 
-	const compileFiles = async(paths: string) => {
+	const compileFiles = async (paths: string) => {
 		let input = ''
 
 		if (paths.includes('*')) {
@@ -69,7 +78,7 @@ export default function(options: Partial<Options> = {}): Plugin {
 		const files = await fg(input)
 		debug.mjml('Compiling MJML files:', { input, files })
 		files.forEach((file) => {
-			compileInput(file, compileOptions);
+			compileInput(file, compileOptions)
 		})
 	}
 
