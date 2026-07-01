@@ -1,6 +1,22 @@
 name: Release
 
 on:
+  # Button-triggered release: pick the bump type and the workflow bumps the
+  # version, tags it, publishes to npm and pushes the release commit + tag.
+  # You never hand-edit the version, so you can't forget to bump it.
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump'
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+  # Legacy path: pushing a v* tag (e.g. via `pnpm run release` locally) still
+  # publishes, so existing habits keep working.
   push:
     tags:
       - 'v*'
@@ -25,13 +41,22 @@ jobs:
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npx conventional-github-releaser -p angular
-        continue-on-error: true
-        env:
-          CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
       - name: Install Dependencies
         run: pnpm install
+
+      # Below only runs for the button (workflow_dispatch)
+
+      - name: Configure Git
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version, commit and tag
+        if: github.event_name == 'workflow_dispatch'
+        run: 'pnpm exec bumpp ${{ inputs.bump }} --yes --commit "release: v" --tag --no-push'
+
+      # Shared: build then publish
 
       - name: PNPM build
         run: pnpm run build
@@ -40,3 +65,15 @@ jobs:
         run: pnpm -r publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+      # Push the release commit + tag only after a successful publication, so a
+      # failed publication never leaves a dangling tag / version drift.
+      - name: Push release commit and tag
+        if: github.event_name == 'workflow_dispatch'
+        run: git push --follow-tags
+
+      - name: Create GitHub release
+        run: npx conventional-github-releaser -p angular
+        continue-on-error: true
+        env:
+          CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{secrets.GITHUB_TOKEN}}
