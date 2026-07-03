@@ -7,6 +7,8 @@ on:
     paths:
       - '**.js'
       - '**.ts'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
       - '.github/workflows/test.yaml'
   pull_request:
     branches:
@@ -32,7 +34,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v6.0.9
         with:
-          version: '10'   # latest pnpm 10.x (runs on the whole matrix)
+          version: '10' # latest pnpm 10.x (runs on the whole matrix)
 
       - name: Setup node
         uses: actions/setup-node@v6
@@ -45,6 +47,45 @@ jobs:
 
       - name: Lint
         run: pnpm run lint
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Test
+        run: pnpm run test
+
+  vite-compat:
+    if: ${{ !startsWith(github.event.head_commit.message, 'release:') }}
+    runs-on: ubuntu-latest
+    name: vite ${{ matrix.vite }}
+
+    env:
+      DEBUG: 'vite:mjml*'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        vite: [ 6, 7, 8 ]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6.0.9
+        with:
+          version: '10'
+
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Pin vite ${{ matrix.vite }}
+        run: pnpm add -D vite@${{ matrix.vite }}
 
       - name: Build
         run: pnpm run build
