@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  test-node-versions:
     if: ${{ !startsWith(github.event.head_commit.message, 'release:') }}
     runs-on: ${{ matrix.os }}
 
@@ -54,7 +54,7 @@ jobs:
       - name: Test
         run: pnpm run test
 
-  vite-compat:
+  test-vite-versions:
     if: ${{ !startsWith(github.event.head_commit.message, 'release:') }}
     runs-on: ubuntu-latest
     name: vite ${{ matrix.vite }}
@@ -86,6 +86,45 @@ jobs:
 
       - name: Pin vite ${{ matrix.vite }}
         run: pnpm add -D vite@${{ matrix.vite }}
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Test
+        run: pnpm run test
+
+  test-mjml-versions:
+    if: ${{ !startsWith(github.event.head_commit.message, 'release:') }}
+    runs-on: ubuntu-latest
+    name: mjml ${{ matrix.mjml }}
+
+    env:
+      DEBUG: 'vite:mjml*'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        mjml: [ 4, 5 ]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6.0.9
+        with:
+          version: '10'
+
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Pin mjml ${{ matrix.mjml }}
+        run: pnpm add mjml@${{ matrix.mjml }} mjml-core@${{ matrix.mjml }}
 
       - name: Build
         run: pnpm run build

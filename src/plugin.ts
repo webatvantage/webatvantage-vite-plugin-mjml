@@ -12,7 +12,7 @@ import { debug } from './utils'
 /**
  * Compiles the given MJML file.
  */
-export function compileInput(input: string, options: CompileOptions) {
+export async function compileInput(input: string, options: CompileOptions) {
 	const excludes = Array.isArray(options.exclude)
 		? options.exclude
 		: [options.exclude]
@@ -41,7 +41,7 @@ export function compileInput(input: string, options: CompileOptions) {
 	const source = options.preprocess ? options.preprocess(content, input) : content
 
 	try {
-		const result = mjml(source, options.mjml)
+		const result = await mjml(source, options.mjml)
 		const outputFile = input
 			.replace(normalizePath(options.input), normalizePath(options.output))
 			.replace('.mjml', options.extension)
@@ -77,9 +77,9 @@ export default function (options: Partial<Options> = {}): Plugin {
 
 		const files = await fg(input)
 		debug.mjml('Compiling MJML files:', { input, files })
-		files.forEach((file) => {
-			compileInput(file, compileOptions)
-		})
+		for (const file of files) {
+			await compileInput(file, compileOptions)
+		}
 	}
 
 	return {
@@ -122,7 +122,7 @@ export default function (options: Partial<Options> = {}): Plugin {
 
 				debug.watch(`${path} changed, compiling`)
 
-				compileInput(path, compileOptions)
+				await compileInput(path, compileOptions)
 
 				if (views) {
 					await compileFiles(views)
