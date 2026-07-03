@@ -31,24 +31,27 @@
     "release": "bumpp --push --tag --commit \"release: v\""
   },
   "dependencies": {
+    "@types/mjml-core": "^4.7.4",
     "debug": "^4.3.4",
     "fast-glob": "^3.3.3",
     "mjml": "^4.15.3",
     "mjml-core": "^4.15.3",
     "picocolors": "^1.0.0"
   },
+  "peerDependencies": {
+    "vite": "^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0"
+  },
   "devDependencies": {
     "@innocenzi/eslint-config": "^0.22.6",
     "@types/debug": "^4.1.12",
     "@types/mjml": "^4.7.4",
-    "@types/mjml-core": "^4.7.4",
-    "@types/node": "^18.19.70",
+    "@types/node": "^22.10.0",
     "bumpp": "^9.9.2",
     "eslint": "^8.57.1",
     "typescript": "^5.7.2",
     "unbuild": "^2.0.0",
-    "vite": "^3.2.8",
-    "vitest": "^3.0.5"
+    "vite": "^8.1.3",
+    "vitest": "^4.1.9"
   },
   "engines": {
     "node": ">=20.20",
