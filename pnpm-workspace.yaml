@@ -2,3 +2,9 @@ allowBuilds:
   # esbuild ships its binary via a platform optional-dependency, so its
   # postinstall script isn't needed for the build to work.
   esbuild: false
+
+# Supply-chain cooldown: refuse to install any package version published less
+# than this many minutes ago (1440 = 1 day, pnpm's own default). Gives freshly
+# published — potentially compromised — releases time to be caught before they
+# enter the lockfile. Add package names to `minimumReleaseAgeExclude` to exempt.
+minimumReleaseAge: 1440
