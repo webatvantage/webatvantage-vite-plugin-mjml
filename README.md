@@ -10,14 +10,16 @@
 	<p align="center">
 		A plugin for compiling <a href="https://mjml.io/"><code>mjml</code></a> files in your Vite pipeline.
 	</p>
-	<pre><div align="center">npm i -D @webatvantage/vite-plugin-mjml</div></pre>
+	<pre><div align="center">npm i -D @webatvantage/vite-plugin-mjml mjml</div></pre>
 </p>
 
 &nbsp;
 
 ## Usage
 
-Install `vite-plugin-mjml` and add it to your Vite configuration:
+Install `vite-plugin-mjml` along with `mjml` — it is a peer dependency, so you choose the
+major version. Both **MJML 4 and 5** are supported (`^4.15.3 || ^5.0.0`). Then add the plugin
+to your Vite configuration:
 
 ```ts
 import { defineConfig } from 'vite'
