@@ -44,7 +44,6 @@
   "devDependencies": {
     "@innocenzi/eslint-config": "^0.22.6",
     "@types/debug": "^4.1.12",
-    "@types/mjml": "^5.0.0",
     "@types/node": "^22.10.0",
     "bumpp": "^9.9.2",
     "eslint": "^8.57.1",
