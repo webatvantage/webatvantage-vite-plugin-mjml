@@ -4,7 +4,7 @@ import path from 'node:path'
 import type { Plugin } from 'vite'
 import { normalizePath } from 'vite'
 import mjml from 'mjml'
-import fg from 'fast-glob'
+import { glob } from 'tinyglobby'
 import c from 'picocolors'
 import type { CompileOptions, Options } from './types'
 import { debug } from './utils'
@@ -75,7 +75,14 @@ export default function (options: Partial<Options> = {}): Plugin {
 			input = path.join(paths, '**/*.mjml').replace(/\\/g, '/')
 		}
 
-		const files = await fg(input)
+		if (!input) {
+			return
+		}
+
+		const files = await glob(input, {
+			absolute: path.isAbsolute(input),
+			expandDirectories: false,
+		})
 		debug.mjml('Compiling MJML files:', { input, files })
 		for (const file of files) {
 			await compileInput(file, compileOptions)
